@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Primary Colors (From SIRI AGRO template) -->
+    <color name="primary">#1B5E20</color>          <!-- Dark Forest Green -->
+    <color name="primary_dark">#0D3F11</color>     <!-- Darker Green -->
+    <color name="primary_light">#4CAF50</color>    <!-- Lighter Green -->
+
+    <!-- Secondary/Accent Colors -->
+    <color name="accent">#FBC02D</color>           <!-- Golden Yellow -->
+    <color name="accent_dark">#F9A825</color>      <!-- Deeper Yellow -->
+    <color name="accent_light">#FFF9C4</color>     <!-- Light Yellow -->
+
+    <!-- Background & Surface -->
+    <color name="background">#F5F5F5</color>       <!-- Light Gray -->
+    <color name="surface">#FFFFFF</color>          <!-- Pure White -->
+    <color name="card_background">#FFFFFF</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#212121</color>     <!-- Dark text -->
+    <color name="text_secondary">#757575</color>   <!-- Gray text -->
+    <color name="text_hint">#BDBDBD</color>        <!-- Light gray hint -->
+    <color name="text_on_primary">#FFFFFF</color>  <!-- White on green -->
+    <color name="text_on_accent">#000000</color>   <!-- Black on yellow -->
+    <color name="text_on_background">#212121</color>
+    <color name="text_on_surface">#212121</color>
+
+    <!-- Additional Colors -->
+    <color name="brown_text">#795548</color>       <!-- Brown -->
+    <color name="cream">#FFF8E1</color>            <!-- Cream background -->
+
+    <!-- Status Colors -->
+    <color name="success">#4CAF50</color>
+    <color name="error">#F44336</color>
+    <color name="warning">#FF9800</color>
+
+    <!-- Utility -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
 </resources>

@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +41,11 @@ public class SeedRatePMTActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_seed_rate_pmtactivity);
 
+        // Set action bar title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Soya Seed Rate (PMT)");
+        }
+
         imagePreview = findViewById(R.id.imagePreview);
         etRate = findViewById(R.id.etRate);
         etQuality = findViewById(R.id.etQuality);
@@ -50,6 +57,160 @@ public class SeedRatePMTActivity extends AppCompatActivity {
 
         templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.seedpmt);
         imagePreview.setImageBitmap(templateBitmap);
+
+        // Add validation for Rate field (only numbers)
+        etRate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String rate = s.toString().trim();
+                if (!rate.isEmpty() && !rate.matches("\\d+")) {
+                    etRate.setError("Enter a valid number");
+                } else {
+                    etRate.setError(null);
+                }
+            }
+        });
+
+        // Add auto-formatting mask for Date field (dd/MM/yyyy)
+        etDate.addTextChangedListener(new TextWatcher() {
+            private String current = "";
+            private String ddmmyyyy = "DDMMYYYY";
+            private Calendar cal = Calendar.getInstance();
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().equals(current)) {
+                    String clean = s.toString().replaceAll("[^\\d.]", "");
+                    String cleanC = current.replaceAll("[^\\d.]", "");
+
+                    int cl = clean.length();
+                    int sel = cl;
+                    for (int i = 2; i <= cl && i < 6; i += 2) {
+                        sel++;
+                    }
+                    if (clean.equals(cleanC)) sel--;
+
+                    if (clean.length() < 8) {
+                        clean = clean + ddmmyyyy.substring(clean.length());
+                    } else {
+                        int day = Integer.parseInt(clean.substring(0, 2));
+                        int mon = Integer.parseInt(clean.substring(2, 4));
+                        int year = Integer.parseInt(clean.substring(4, 8));
+
+                        mon = mon < 1 ? 1 : mon > 12 ? 12 : mon;
+                        cal.set(Calendar.MONTH, mon - 1);
+                        year = (year < 1900) ? 1900 : (year > 2100) ? 2100 : year;
+                        cal.set(Calendar.YEAR, year);
+                        day = (day > cal.getActualMaximum(Calendar.DATE)) ? cal.getActualMaximum(Calendar.DATE) : day;
+                        clean = String.format("%02d%02d%04d", day, mon, year);
+                    }
+
+                    clean = String.format("%s/%s/%s", clean.substring(0, 2),
+                            clean.substring(2, 4),
+                            clean.substring(4, 8));
+
+                    sel = sel < 0 ? 0 : sel;
+                    current = clean;
+                    etDate.setText(current);
+                    etDate.setSelection(sel < current.length() ? sel : current.length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
+
+        // Add validation for Day field (only alphabets and spaces)
+        etDay.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String day = s.toString().trim();
+                if (!day.isEmpty() && !day.matches("[a-zA-Z ]+")) {
+                    etDay.setError("Enter only letters");
+                } else {
+                    etDay.setError(null);
+                }
+            }
+        });
+
+        // Add auto-formatting mask for Time field (12-hour format hh:mm AM/PM)
+        etTime.addTextChangedListener(new TextWatcher() {
+            private String current = "";
+            private boolean isFormatting = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isFormatting) return;
+
+                String input = s.toString();
+                if (input.equals(current)) return;
+
+                isFormatting = true;
+
+                String clean = input.replaceAll("[^\\d]", "");
+
+                if (clean.length() == 0) {
+                    current = "";
+                    etTime.setText("");
+                    isFormatting = false;
+                    return;
+                }
+
+                StringBuilder formatted = new StringBuilder();
+                int len = Math.min(clean.length(), 4);
+
+                for (int i = 0; i < len; i++) {
+                    if (i == 2) {
+                        formatted.append(":");
+                    }
+                    formatted.append(clean.charAt(i));
+                }
+
+                if (clean.length() >= 4) {
+                    int hh = Integer.parseInt(clean.substring(0, 2));
+                    int mm = Integer.parseInt(clean.substring(2, 4));
+
+                    if (hh < 1) hh = 1;
+                    if (hh > 12) hh = 12;
+                    if (mm > 59) mm = 59;
+
+                    formatted = new StringBuilder(String.format("%02d:%02d", hh, mm));
+
+                    if (hh >= 1 && hh <= 11) {
+                        formatted.append(" AM");
+                    } else {
+                        formatted.append(" PM");
+                    }
+                }
+
+                current = formatted.toString();
+                etTime.setText(current);
+                etTime.setSelection(current.length());
+
+                isFormatting = false;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
 
         btnPreview.setOnClickListener(v -> {
             Bitmap rendered = renderImage(
@@ -90,10 +251,6 @@ public class SeedRatePMTActivity extends AppCompatActivity {
         float h = bmp.getHeight();
         float centerX = w / 2;
 
-        // ============================================
-        // PAINT STYLES
-        // ============================================
-
         Paint blackPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         blackPaint.setColor(Color.parseColor("#1C1C1C"));
         blackPaint.setTextSize(w * 0.038f);
@@ -112,9 +269,6 @@ public class SeedRatePMTActivity extends AppCompatActivity {
         redPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         redPaint.setTextAlign(Paint.Align.CENTER);
 
-        // ============================================
-        // GET DATE/DAY/TIME
-        // ============================================
         Calendar now = Calendar.getInstance();
         SimpleDateFormat dateFmt = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         SimpleDateFormat dayFmt = new SimpleDateFormat("EEEE", Locale.ENGLISH);
@@ -124,27 +278,17 @@ public class SeedRatePMTActivity extends AppCompatActivity {
         String dayStr = userDay.isEmpty() ? dayFmt.format(now.getTime()).toUpperCase() : userDay.toUpperCase();
         String timeStr = userTime.isEmpty() ? timeFmt.format(now.getTime()).toUpperCase() : userTime.toUpperCase();
 
-        // ============================================
-        // PERCENTAGE-BASED POSITIONING
-        // Assuming template height is 1920 pixels in Paint
-        // Adjust these if your template has different dimensions
-        // ============================================
-
-        float dateY = 0.2900f * h;      // 489 / 1920
-        float dayTimeY = 0.3343f * h;   // 533 / 1920
-        float rateY = 0.3831f * h;      // 611 / 1920
-        float deliveryY = 0.4218f * h;  // 677 / 1920
-        float qualityY = 0.4875f * h;   // 780 / 1920
-        float paymentY = 0.5156f * h;   // 823 / 1920
-
-        // ============================================
-        // DRAW TEXT AT EXACT POSITIONS
-        // ============================================
+        float dateY = 0.2900f * h;
+        float dayTimeY = 0.3343f * h;
+        float rateY = 0.3831f * h;
+        float deliveryY = 0.4218f * h;
+        float qualityY = 0.4875f * h;
+        float paymentY = 0.5156f * h;
 
         canvas.drawText("DATE :- " + dateStr, centerX, dateY, brownPaint);
         canvas.drawText("DAY :- " + dayStr + "  TIME :- " + timeStr, centerX, dayTimeY, brownPaint);
 
-        String rateText = "SOYA SEED RATE - " + (rate.isEmpty() ? "" : rate + "/- PMT +GST");
+        String rateText = "SOYA DOC PER TON RATE - " + (rate.isEmpty() ? "" : rate + "/- PMT +GST");
         canvas.drawText(rateText, centerX, rateY, blackPaint);
 
         canvas.drawText("DELIVERY PERIOD - WAR TO WAR", centerX, deliveryY, blackPaint);

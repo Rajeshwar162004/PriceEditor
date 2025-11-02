@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // Hardcoded password - change this to your desired password
     private static final String CORRECT_PASSWORD = "1234";
 
     @Override
@@ -25,12 +24,10 @@ public class LoginActivity extends AppCompatActivity {
             String enteredPassword = etPassword.getText().toString().trim();
 
             if (enteredPassword.equals(CORRECT_PASSWORD)) {
-                // Correct password - go to menu
                 Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                 startActivity(intent);
                 finish();
             } else {
-                // Wrong password
                 Toast.makeText(this, "Incorrect Password", Toast.LENGTH_SHORT).show();
                 etPassword.setText("");
             }
