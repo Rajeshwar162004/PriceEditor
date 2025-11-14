@@ -1,7 +1,10 @@
 package com.example.priceeditor;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,327 +14,425 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 public class SeedRatePQTActivity extends AppCompatActivity {
 
     private ImageView imagePreview;
-    private EditText etRate, etDate, etTime;
-    private RadioGroup rgAmPm;
+    private TextInputEditText etRate, etDate, etDay, etTime;
+    private TextInputLayout tilRate;
+    private MaterialCardView loadingCard;
+    private LinearProgressIndicator progressIndicator;
+    private MaterialButton btnPreview, btnExport, btnClear, btnAutoFill;
+
     private Bitmap templateBitmap;
+    private Calendar selectedCalendar;
+    private boolean isPreviewGenerated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_seed_rate_pqtactivity);
 
-        // Hide action bar
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        initializeViews();
+        setupTemplate();
+        setupInputListeners();
+        setupButtonListeners();
+        setupDateTimePickers();
+        autoFillCurrentDateTime();
+    }
+
+    private void initializeViews() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setTitle("Soya Seed Rate Generator");
         }
 
-        imagePreview = findViewById(R.id.imagePreview);
         etRate = findViewById(R.id.etRate);
         etDate = findViewById(R.id.etDate);
+        etDay = findViewById(R.id.etDay);
         etTime = findViewById(R.id.etTime);
-        rgAmPm = findViewById(R.id.rgAmPm);
-        Button btnPreview = findViewById(R.id.btnPreview);
-        Button btnExport = findViewById(R.id.btnExport);
+        tilRate = findViewById(R.id.tilRate);
 
-        // Load template
-        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.template);
+        btnPreview = findViewById(R.id.btnPreview);
+        btnExport = findViewById(R.id.btnExport);
+        btnClear = findViewById(R.id.btnClear);
+        btnAutoFill = findViewById(R.id.btnAutoFill);
+
+        imagePreview = findViewById(R.id.imagePreview);
+        loadingCard = findViewById(R.id.loadingCard);
+        progressIndicator = findViewById(R.id.progressIndicator);
+
+        selectedCalendar = Calendar.getInstance();
+        updateProgress(0);
+        btnExport.setEnabled(false);
+    }
+
+    private void setupTemplate() {
+        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.new_templet);
         imagePreview.setImageBitmap(templateBitmap);
+        imagePreview.setContentDescription("Soya Seed Rate Template Preview");
+    }
 
-        // Set default AM/PM based on current time
-        Calendar now = Calendar.getInstance();
-        int currentHour = now.get(Calendar.HOUR_OF_DAY);
-        if (currentHour < 12) {
-            rgAmPm.check(R.id.rbAM);
-        } else {
-            rgAmPm.check(R.id.rbPM);
-        }
-
-        // Add validation for Rate field (only numbers)
-        etRate.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+    private void setupInputListeners() {
+        etRate.addTextChangedListener(new SimpleWatcher() {
+            @Override public void afterTextChanged(Editable s) {
                 String rate = s.toString().trim();
                 if (!rate.isEmpty() && !rate.matches("\\d+")) {
-                    etRate.setError("Enter a valid number");
+                    tilRate.setError("Enter a valid number");
                 } else {
-                    etRate.setError(null);
+                    tilRate.setError(null);
+                    validateForm();
                 }
             }
         });
 
-        // Add auto-formatting mask for Date field (dd-MM-yyyy)
+        etDay.addTextChangedListener(new SimpleWatcher() {
+            @Override public void afterTextChanged(Editable s) {
+                String day = s.toString().trim();
+                if (!day.isEmpty() && !day.matches("[a-zA-Z ]+")) {
+                    etDay.setError("Enter only letters");
+                } else {
+                    etDay.setError(null);
+                }
+            }
+        });
+
+        // Date auto-format
         etDate.addTextChangedListener(new TextWatcher() {
             private String current = "";
-            private String ddmmyyyy = "DDMMYYYY";
-            private Calendar cal = Calendar.getInstance();
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            private final String ddmmyyyy = "DDMMYYYY";
+            private final Calendar cal = Calendar.getInstance();
+            @Override public void beforeTextChanged(CharSequence s,int st,int c,int a){}
+            @Override public void onTextChanged(CharSequence s,int st,int b,int c){
                 if (!s.toString().equals(current)) {
                     String clean = s.toString().replaceAll("[^\\d.]", "");
                     String cleanC = current.replaceAll("[^\\d.]", "");
-
-                    int cl = clean.length();
-                    int sel = cl;
-                    for (int i = 2; i <= cl && i < 6; i += 2) {
-                        sel++;
-                    }
+                    int cl = clean.length(); int sel = cl;
+                    for (int i=2;i<=cl && i<6;i+=2) sel++;
                     if (clean.equals(cleanC)) sel--;
-
-                    if (clean.length() < 8) {
+                    if (clean.length()<8){
                         clean = clean + ddmmyyyy.substring(clean.length());
                     } else {
-                        int day = Integer.parseInt(clean.substring(0, 2));
-                        int mon = Integer.parseInt(clean.substring(2, 4));
-                        int year = Integer.parseInt(clean.substring(4, 8));
-
-                        mon = mon < 1 ? 1 : mon > 12 ? 12 : mon;
-                        cal.set(Calendar.MONTH, mon - 1);
-                        year = (year < 1900) ? 1900 : (year > 2100) ? 2100 : year;
+                        int day = Integer.parseInt(clean.substring(0,2));
+                        int mon = Integer.parseInt(clean.substring(2,4));
+                        int year = Integer.parseInt(clean.substring(4,8));
+                        mon = Math.max(1, Math.min(12, mon));
+                        cal.set(Calendar.MONTH, mon-1);
+                        year = Math.max(1900, Math.min(2100, year));
                         cal.set(Calendar.YEAR, year);
-                        day = (day > cal.getActualMaximum(Calendar.DATE)) ? cal.getActualMaximum(Calendar.DATE) : day;
-                        clean = String.format("%02d%02d%04d", day, mon, year);
+                        day = Math.min(day, cal.getActualMaximum(Calendar.DATE));
+                        clean = String.format(Locale.US, "%02d%02d%04d", day, mon, year);
                     }
-
-                    clean = String.format("%s-%s-%s", clean.substring(0, 2),
-                            clean.substring(2, 4),
-                            clean.substring(4, 8));
-
-                    sel = sel < 0 ? 0 : sel;
+                    clean = String.format(Locale.US, "%s/%s/%s", clean.substring(0,2), clean.substring(2,4), clean.substring(4,8));
                     current = clean;
                     etDate.setText(current);
-                    etDate.setSelection(sel < current.length() ? sel : current.length());
+                    etDate.setSelection(Math.min(sel, current.length()));
                 }
             }
-
-            @Override
-            public void afterTextChanged(Editable s) { }
+            @Override public void afterTextChanged(Editable s){}
         });
 
-        // Improved time field formatting - waits for user to complete input
-        etTime.addTextChangedListener(new TextWatcher() {
-            private String current = "";
-            private boolean isFormatting;
+        // TextWatcher for etTime removed - time picker handles it correctly
+    }
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+    private void setupDateTimePickers() {
+        etDate.setOnClickListener(v -> showDatePicker());
+        etTime.setOnClickListener(v -> showTimePicker());
+    }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (isFormatting) {
-                    return;
-                }
+    private void showDatePicker() {
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog dlg = new DatePickerDialog(
+                this,
+                (view, y, m, d) -> {
+                    selectedCalendar.set(Calendar.YEAR, y);
+                    selectedCalendar.set(Calendar.MONTH, m);
+                    selectedCalendar.set(Calendar.DAY_OF_MONTH, d);
+                    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    SimpleDateFormat dayf = new SimpleDateFormat("EEEE", Locale.US);
+                    etDate.setText(df.format(selectedCalendar.getTime()));
+                    etDay.setText(dayf.format(selectedCalendar.getTime()).toUpperCase(Locale.US));
+                },
+                c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)
+        );
+        dlg.show();
+    }
 
-                String input = s.toString();
-                if (!input.equals(current)) {
-                    String digitsOnly = input.replaceAll("[^\\d]", "");
+    private void showTimePicker() {
+        Calendar c = Calendar.getInstance();
+        TimePickerDialog dlg = new TimePickerDialog(
+                this,
+                (view, hourOfDay, minute) -> {
+                    selectedCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    selectedCalendar.set(Calendar.MINUTE, minute);
+                    etTime.setText(formatTime(hourOfDay, minute));
+                },
+                c.get(Calendar.HOUR_OF_DAY),
+                c.get(Calendar.MINUTE),
+                false
+        );
+        dlg.show();
+    }
 
-                    if (digitsOnly.length() == 0) {
-                        current = "";
-                        return;
-                    }
+    // Convert 24h -> 12h with correct AM/PM
+    private String formatTime(int hourOfDay, int minute) {
+        boolean pm = hourOfDay >= 12;
+        int hour12 = hourOfDay % 12;
+        if (hour12 == 0) hour12 = 12;
+        return String.format(Locale.US, "%02d:%02d %s", hour12, minute, pm ? "PM" : "AM");
+    }
 
-                    StringBuilder formatted = new StringBuilder();
-                    int length = digitsOnly.length();
+    // Current time formatted via HOUR_OF_DAY (no SimpleDateFormat "a")
+    private String nowTimeString() {
+        Calendar now = Calendar.getInstance();
+        return formatTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
+    }
 
-                    if (length <= 2) {
-                        // Just typing hours - don't format yet
-                        formatted.append(digitsOnly);
-                    } else if (length == 3) {
-                        // Has moved to minutes - format hours and add colon
-                        int hours = Integer.parseInt(digitsOnly.substring(0, 2));
-                        if (hours == 0) {
-                            hours = 1;
-                        } else if (hours > 12) {
-                            hours = 12;
-                        }
-                        formatted.append(String.format(Locale.getDefault(), "%02d", hours));
-                        formatted.append(":");
-                        formatted.append(digitsOnly.charAt(2));
-                    } else {
-                        // Full time entered
-                        int hours = Integer.parseInt(digitsOnly.substring(0, 2));
-                        if (hours == 0) {
-                            hours = 1;
-                        } else if (hours > 12) {
-                            hours = 12;
-                        }
-                        formatted.append(String.format(Locale.getDefault(), "%02d", hours));
-                        formatted.append(":");
+    private void setupButtonListeners() {
+        btnPreview.setOnClickListener(v -> generatePreview());
+        btnExport.setOnClickListener(v -> exportImage());
+        btnClear.setOnClickListener(v -> clearForm());
+        btnAutoFill.setOnClickListener(v -> autoFillCurrentDateTime());
+    }
 
-                        int minutes = Integer.parseInt(digitsOnly.substring(2, Math.min(4, length)));
-                        if (minutes > 59) {
-                            minutes = 59;
-                        }
-                        formatted.append(String.format(Locale.getDefault(), "%02d", minutes));
-                    }
+    private void validateForm() {
+        boolean isValid = !etRate.getText().toString().trim().isEmpty();
+        btnPreview.setEnabled(isValid);
+        updateProgress(isValid ? 100 : 0);
+    }
 
-                    current = formatted.toString();
-                    isFormatting = true;
-                    etTime.setText(current);
-                    etTime.setSelection(current.length());
-                    isFormatting = false;
-                }
-            }
+    private void updateProgress(int progress) {
+        if (progressIndicator != null) {
+            progressIndicator.setProgress(progress);
+            progressIndicator.setVisibility(progress > 0 ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                // Validate complete time
-                String timeStr = s.toString();
-                if (timeStr.length() == 5) {
-                    String[] parts = timeStr.split(":");
-                    if (parts.length == 2) {
-                        try {
-                            int hour = Integer.parseInt(parts[0]);
-                            int minute = Integer.parseInt(parts[1]);
+    private void generatePreview() {
+        if (!validateRequiredFields()) {
+            showSnackbar("Please fill seed rate field");
+            return;
+        }
 
-                            if (hour < 1 || hour > 12) {
-                                etTime.setError("Hour must be 01-12");
-                            } else if (minute < 0 || minute > 59) {
-                                etTime.setError("Minute must be 00-59");
-                            } else {
-                                etTime.setError(null);
-                            }
-                        } catch (NumberFormatException e) {
-                            etTime.setError("Invalid time format");
-                        }
-                    }
-                }
-            }
-        });
+        Bitmap rendered = renderImage(
+                templateBitmap,
+                etRate.getText().toString().trim(),
+                etDate.getText().toString().trim(),
+                etDay.getText().toString().trim(),
+                etTime.getText().toString().trim()
+        );
 
-        btnPreview.setOnClickListener(v -> {
-            String amPm = getSelectedAmPm();
-            Bitmap rendered = renderImage(
-                    templateBitmap,
-                    etRate.getText().toString().trim(),
-                    etDate.getText().toString().trim(),
-                    etTime.getText().toString().trim(),
-                    amPm
-            );
-            imagePreview.setImageBitmap(rendered);
-        });
+        imagePreview.setImageBitmap(rendered);
+        isPreviewGenerated = true;
+        btnExport.setEnabled(true);
+        showSnackbar("Preview generated successfully");
+    }
 
-        btnExport.setOnClickListener(v -> {
-            String amPm = getSelectedAmPm();
-            Bitmap rendered = renderImage(
-                    templateBitmap,
-                    etRate.getText().toString().trim(),
-                    etDate.getText().toString().trim(),
-                    etTime.getText().toString().trim(),
-                    amPm
-            );
+    private void exportImage() {
+        if (!isPreviewGenerated) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Generate Preview First")
+                    .setMessage("Please generate a preview before exporting to ensure the image looks correct.")
+                    .setPositiveButton("Generate & Export", (d, w) -> {
+                        generatePreview();
+                        new Handler(Looper.getMainLooper()).postDelayed(this::performExport, 500);
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+            return;
+        }
+        performExport();
+    }
+
+    private void performExport() {
+        showLoading(true);
+        Executors.newSingleThreadExecutor().execute(() -> {
             try {
-                Uri uri = saveToGallery(this, rendered, "soya_pqt");
-                Toast.makeText(this, "Saved to Gallery: " + uri.getLastPathSegment(), Toast.LENGTH_LONG).show();
+                Bitmap rendered = renderImage(
+                        templateBitmap,
+                        etRate.getText().toString().trim(),
+                        etDate.getText().toString().trim(),
+                        etDay.getText().toString().trim(),
+                        etTime.getText().toString().trim()
+                );
+                Uri uri = saveToGallery(this, rendered, "soya_seed_rate_pqt");
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    showLoading(false);
+                    showExportSuccessDialog(uri);
+                });
             } catch (IOException e) {
                 Log.e("ExportError", "Error saving image", e);
-                Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    showLoading(false);
+                    showSnackbar("Error saving image: " + e.getMessage());
+                });
             }
         });
     }
 
-    private String getSelectedAmPm() {
-        int selectedId = rgAmPm.getCheckedRadioButtonId();
-        if (selectedId == R.id.rbAM) {
-            return "AM";
-        } else if (selectedId == R.id.rbPM) {
-            return "PM";
-        }
-        // Default based on current time
-        Calendar now = Calendar.getInstance();
-        return now.get(Calendar.HOUR_OF_DAY) < 12 ? "AM" : "PM";
+    private void clearForm() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Clear Form")
+                .setMessage("Are you sure you want to clear all fields?")
+                .setPositiveButton("Clear", (d, w) -> {
+                    etRate.setText("");
+                    etDate.setText("");
+                    etDay.setText("");
+                    etTime.setText("");
+                    imagePreview.setImageBitmap(templateBitmap);
+                    isPreviewGenerated = false;
+                    btnExport.setEnabled(false);
+                    validateForm();
+                    showSnackbar("Form cleared");
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
-    private Bitmap renderImage(Bitmap base, String rate, String userDate, String userTime, String amPm) {
+    private void autoFillCurrentDateTime() {
+        Calendar now = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dayf = new SimpleDateFormat("EEEE", Locale.US);
+        etDate.setText(df.format(now.getTime()));
+        etDay.setText(dayf.format(now.getTime()).toUpperCase(Locale.US));
+        etTime.setText(nowTimeString()); // deterministic AM/PM
+        showSnackbar("Current date/time filled");
+    }
+
+    private boolean validateRequiredFields() {
+        if (etRate.getText().toString().trim().isEmpty()) {
+            tilRate.setError("Seed rate is required");
+            return false;
+        } else {
+            tilRate.setError(null);
+            return true;
+        }
+    }
+
+    private void showLoading(boolean show) {
+        if (loadingCard != null) loadingCard.setVisibility(show ? View.VISIBLE : View.GONE);
+        btnExport.setEnabled(!show);
+        btnPreview.setEnabled(!show);
+    }
+
+    private void showSnackbar(String message) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT)
+                .setBackgroundTint(ContextCompat.getColor(this, R.color.primary_green))
+                .show();
+    }
+
+    private void showExportSuccessDialog(Uri uri) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Export Successful")
+                .setMessage("Image has been saved to your gallery.")
+                .setPositiveButton("View", (d, w) -> {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setDataAndType(uri, "image/png");
+                    i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(i);
+                })
+                .setNegativeButton("OK", null)
+                .show();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    private Bitmap renderImage(Bitmap base, String rate, String userDate, String userDay, String userTime) {
         Bitmap bmp = base.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(bmp);
 
         float w = bmp.getWidth();
         float h = bmp.getHeight();
+        float centerX = w / 2;
 
         Paint ratePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         ratePaint.setColor(Color.BLACK);
-        ratePaint.setTextSize(w * 0.050f);
+        ratePaint.setTextSize(w * 0.0475f);
         ratePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        ratePaint.setTextAlign(Paint.Align.LEFT);
 
-        Paint datePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        datePaint.setColor(Color.parseColor("#A52A2A"));
-        datePaint.setTextSize(w * 0.035f);
-        datePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        Paint brownPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        brownPaint.setColor(Color.parseColor("#8B4513"));
+        brownPaint.setTextSize(w * 0.032f);
+        brownPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        brownPaint.setTextAlign(Paint.Align.CENTER);
 
-        Paint timePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        timePaint.setColor(Color.parseColor("#A52A2A"));
-        timePaint.setTextSize(w * 0.035f);
-        timePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-
-        float rateX = 0.495f * w, rateY = 0.295f * h;
-        float dateX = 0.195f * w, dateY = 0.22f * h;
-        float timeX = 0.60f * w, timeY = 0.22f * h;
+        float dateY = 0.2190f * h;
+        float dayTimeY = 0.2550f * h;
+        float rateY = 0.295f * h;
+        float rateX = 0.495f * w;
 
         Calendar now = Calendar.getInstance();
-        SimpleDateFormat dateFmt = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-        SimpleDateFormat timeFmt = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+        SimpleDateFormat dateFmt = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dayFmt = new SimpleDateFormat("EEEE", Locale.US);
 
         String dateStr = userDate.isEmpty() ? dateFmt.format(now.getTime()) : userDate;
-        String timeStr;
+        String dayStr = userDay.isEmpty() ? dayFmt.format(now.getTime()).toUpperCase(Locale.US) : userDay.toUpperCase(Locale.US);
+        String timeStr = userTime.isEmpty()
+                ? formatTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE))
+                : userTime.toUpperCase(Locale.US);
 
-        if (userTime.isEmpty()) {
-            timeStr = timeFmt.format(now.getTime());
-        } else {
-            timeStr = userTime + " " + amPm;
-        }
-
-        ratePaint.setTextAlign(Paint.Align.LEFT);
+        canvas.drawText("DATE :- " + dateStr, centerX, dateY, brownPaint);
+        canvas.drawText("DAY :- " + dayStr + "  TIME :- " + timeStr, centerX, dayTimeY, brownPaint);
         canvas.drawText((rate.isEmpty() ? "" : rate) + "/-", rateX, rateY, ratePaint);
-
-        datePaint.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("DATE: " + dateStr, dateX, dateY, datePaint);
-
-        timePaint.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("TIME: " + timeStr, timeX, timeY, timePaint);
 
         return bmp;
     }
 
     private Uri saveToGallery(Context ctx, Bitmap bmp, String prefix) throws IOException {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, prefix + "_" + System.currentTimeMillis() + ".png");
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
-        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/PriceEditor");
-        values.put(MediaStore.Images.Media.IS_PENDING, 1);
+        ContentValues v = new ContentValues();
+        v.put(MediaStore.Images.Media.DISPLAY_NAME, prefix + "_" + System.currentTimeMillis() + ".png");
+        v.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+        v.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/PriceEditor");
+        v.put(MediaStore.Images.Media.IS_PENDING, 1);
 
-        Uri uri = ctx.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        Uri uri = ctx.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, v);
         if (uri == null) throw new IOException("Failed to create file in MediaStore");
 
         try (OutputStream out = ctx.getContentResolver().openOutputStream(uri)) {
@@ -342,10 +443,16 @@ public class SeedRatePQTActivity extends AppCompatActivity {
             }
         }
 
-        values.clear();
-        values.put(MediaStore.Images.Media.IS_PENDING, 0);
-        ctx.getContentResolver().update(uri, values, null, null);
+        v.clear();
+        v.put(MediaStore.Images.Media.IS_PENDING, 0);
+        ctx.getContentResolver().update(uri, v, null, null);
 
         return uri;
+    }
+
+    // Tiny utility to reduce boilerplate
+    private abstract static class SimpleWatcher implements TextWatcher {
+        @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+        @Override public void onTextChanged(CharSequence s, int st, int b, int c) {}
     }
 }

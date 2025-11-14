@@ -13,33 +13,33 @@
         app:cardBackgroundColor="@color/primary"
         app:cardCornerRadius="0dp"
         app:cardElevation="4dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:gravity="center">
+            android:padding="24dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SIRI AGRO FOODS"
+                android:textColor="@color/white"
                 android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/white" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Select Template"
-                android:textSize="18sp"
                 android:textColor="@color/accent_light"
-                android:layout_marginTop="8dp" />
+                android:textSize="18sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -47,21 +47,21 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:orientation="vertical"
         android:padding="24dp"
-        app:layout_constraintTop_toBottomOf="@id/headerCard"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerCard">
 
         <!-- Seed Rate PQT Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,27 +73,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Soya Seed Rate"
+                    android:textColor="@color/text_primary"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Per Quintal (DOC) Template"
-                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
+                    android:text="Per Quintal (PQT) Template"
                     android:textColor="@color/text_secondary"
-                    android:layout_marginTop="4dp" />
+                    android:textSize="14sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSeedRatePQT"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:text="Open Editor"
                     android:textColor="@color/white"
                     app:backgroundTint="@color/primary"
-                    app:cornerRadius="12dp"
-                    android:layout_marginTop="16dp" />
+                    app:cornerRadius="12dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -101,10 +101,10 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -115,28 +115,28 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Soya Seed Rate"
+                    android:text="Soya DOC Rate"
+                    android:textColor="@color/text_primary"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Per Metric Ton (PMT) Template"
-                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
+                    android:text="Per Metric Ton (DOC) Template"
                     android:textColor="@color/text_secondary"
-                    android:layout_marginTop="4dp" />
+                    android:textSize="14sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSeedRatePMT"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:text="Open Editor"
                     android:textColor="@color/white"
                     app:backgroundTint="@color/accent"
-                    app:cornerRadius="12dp"
-                    android:layout_marginTop="16dp" />
+                    app:cornerRadius="12dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -158,27 +158,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Soya Solvent Oil"
+                    android:textColor="@color/text_primary"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:text="Oil Rate Template"
-                    android:textSize="14sp"
                     android:textColor="@color/text_secondary"
-                    android:layout_marginTop="4dp" />
+                    android:textSize="14sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSolventOil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:text="Open Editor"
                     android:textColor="@color/white"
                     app:backgroundTint="@color/primary_light"
-                    app:cornerRadius="12dp"
-                    android:layout_marginTop="16dp" />
+                    app:cornerRadius="12dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

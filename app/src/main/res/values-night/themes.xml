@@ -1,15 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme for dark mode -->
-    <style name="Theme.PriceEditor" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color (keep same for consistency) -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorPrimaryVariant">@color/primary_light</item>
+    <style name="Theme.PriceEditor" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorPrimaryDark">@color/primary_green_dark</item>
+        <item name="colorPrimaryVariant">@color/primary_green_light</item>
 
-        <!-- Secondary brand color (keep same) -->
-        <item name="colorSecondary">@color/accent</item>
-        <item name="colorSecondaryVariant">@color/accent_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/accent_yellow</item>
+        <item name="colorSecondaryVariant">@color/accent_yellow_dark</item>
+        <item name="colorAccent">@color/accent_yellow</item>
 
         <!-- Dark mode backgrounds -->
         <item name="android:colorBackground">#121212</item>
@@ -20,13 +20,23 @@
         <item name="colorOnSecondary">@color/black</item>
         <item name="colorOnBackground">@color/white</item>
         <item name="colorOnSurface">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/text_secondary_light</item>
 
         <!-- Status bar -->
-        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:statusBarColor">@color/primary_green_dark</item>
         <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Disable action bar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
 
         <!-- Material Components -->
         <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
         <item name="materialButtonStyle">@style/Widget.MaterialComponents.Button</item>
+
+        <!-- Edit text colors for dark mode -->
+        <item name="editTextColor">@color/white</item>
+        <item name="android:editTextColor">@color/white</item>
     </style>
 </resources>

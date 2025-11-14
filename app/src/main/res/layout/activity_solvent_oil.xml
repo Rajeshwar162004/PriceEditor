@@ -1,200 +1,459 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:fillViewport="true">
+    android:background="@color/background_light"
+    android:fitsSystemWindows="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- App Bar -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:background="@color/primary_green"
+        android:elevation="4dp">
 
-        <!-- Image Preview Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/imageCard"
-            android:layout_width="0dp"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primary_green"
+            app:title="Soya Solvent Oil"
+            app:titleTextColor="@color/white"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            app:strokeColor="@color/accent"
-            app:strokeWidth="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/imagePreview"
-                android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:adjustViewBounds="true"
-                android:padding="8dp"
-                android:scaleType="fitCenter" />
-        </com.google.android.material.card.MaterialCardView>
+            <!-- Progress Indicator -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressIndicator"
+                android:layout_width="0dp"
+                android:layout_height="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:trackColor="@color/surface_grey"
+                app:trackThickness="4dp"
+                app:indicatorColor="@color/accent_yellow" />
 
-        <!-- Input Fields Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/inputCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageCard">
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Template Preview Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/previewCard"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface_grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/progressIndicator">
 
-                <!-- Oil Rate Field -->
-                <com.google.android.material.textfield.TextInputLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Oil Rate"
-                    app:boxStrokeColor="@color/primary"
-                    app:hintTextColor="@color/primary"
-                    app:endIconMode="clear_text"
-                    app:endIconTint="@color/primary"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etOilRate"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:textColor="@color/text_primary" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="Template Preview"
+                        android:textColor="@color/text_primary_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:drawablePadding="8dp"
+                        app:drawableStartCompat="@drawable/ic_preview"
+                        app:drawableTint="@color/primary_green" />
 
-                <!-- Per Kg Field -->
-                <com.google.android.material.textfield.TextInputLayout
+                    <ImageView
+                        android:id="@+id/imagePreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="12dp"
+                        android:adjustViewBounds="true"
+                        android:background="@color/surface_white"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Template Preview" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Fill the form below to customize this template"
+                        android:textColor="@color/text_secondary_dark"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Required Fields Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/requiredFieldsCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface_white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/previewCard">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Per Kg"
-                    app:boxStrokeColor="@color/primary_light"
-                    app:hintTextColor="@color/primary_light"
-                    app:endIconMode="clear_text"
-                    app:endIconTint="@color/primary_light"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etPerKg"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:textColor="@color/text_primary" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="Required Information"
+                        android:textColor="@color/error_red"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:drawablePadding="8dp"
+                        app:drawableStartCompat="@drawable/ic_required"
+                        app:drawableTint="@color/error_red" />
 
-                <!-- Date Field -->
-                <com.google.android.material.textfield.TextInputLayout
+                    <!-- Oil Rate Input -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilOilRate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="Oil Rate"
+                        app:boxBackgroundMode="outline"
+                        app:boxBackgroundColor="@color/surface_white"
+                        app:boxStrokeColor="@color/primary_green"
+                        app:endIconMode="clear_text"
+                        app:endIconTint="@color/primary_green"
+                        app:startIconDrawable="@drawable/ic_rupee"
+                        app:startIconTint="@color/primary_green"
+                        app:helperText="Enter amount in rupees"
+                        app:helperTextTextColor="@color/text_secondary_dark"
+                        app:errorEnabled="true"
+                        app:hintTextColor="@color/primary_green"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etOilRate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:textColor="@color/text_primary_dark"
+                            android:textSize="16sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Per Kg Input -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPerKg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Per Kg"
+                        app:boxBackgroundMode="outline"
+                        app:boxBackgroundColor="@color/surface_white"
+                        app:boxStrokeColor="@color/primary_green_light"
+                        app:endIconMode="clear_text"
+                        app:endIconTint="@color/primary_green_light"
+                        app:startIconDrawable="@drawable/ic_quality"
+                        app:startIconTint="@color/primary_green_light"
+                        app:helperText="e.g., 10 Kg, 15 Kg"
+                        app:helperTextTextColor="@color/text_secondary_dark"
+                        app:errorEnabled="true"
+                        app:hintTextColor="@color/primary_green_light"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPerKg"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:textColor="@color/text_primary_dark"
+                            android:textSize="16sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Optional Fields Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/optionalFieldsCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/primary_green_surface"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/requiredFieldsCard">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Date (DD/MM/YYYY)"
-                    app:boxStrokeColor="@color/accent"
-                    app:hintTextColor="@color/accent_dark"
-                    app:helperText="Optional - Auto-filled if empty"
-                    app:helperTextTextColor="@color/text_secondary"
-                    app:endIconMode="clear_text"
-                    app:endIconTint="@color/accent"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etDate"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:textColor="@color/text_primary" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:text="Optional Information"
+                        android:textColor="@color/text_primary_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:drawablePadding="8dp"
+                        app:drawableStartCompat="@drawable/ic_optional"
+                        app:drawableTint="@color/info_blue" />
 
-                <!-- Day Field -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Day (e.g., Saturday)"
-                    app:boxStrokeColor="@color/primary"
-                    app:hintTextColor="@color/primary"
-                    app:helperText="Optional - Auto-filled if empty"
-                    app:helperTextTextColor="@color/text_secondary"
-                    app:endIconMode="clear_text"
-                    app:endIconTint="@color/primary"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etDay"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:textColor="@color/text_primary" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginTop="4dp"
+                        android:text="Leave empty to use current date/time"
+                        android:textColor="@color/text_secondary_dark"
+                        android:textSize="12sp" />
 
-                <!-- Time Field -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Time (hh:mm AM/PM)"
-                    app:boxStrokeColor="@color/accent"
-                    app:hintTextColor="@color/accent_dark"
-                    app:helperText="Optional - Auto-filled if empty"
-                    app:helperTextTextColor="@color/text_secondary"
-                    app:endIconMode="clear_text"
-                    app:endIconTint="@color/accent"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etTime"
+                    <!-- Date Picker -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:textColor="@color/text_primary" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginTop="16dp"
+                        android:hint="Date"
+                        app:boxBackgroundMode="outline"
+                        app:boxBackgroundColor="@color/surface_white"
+                        app:boxStrokeColor="@color/accent_yellow"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@drawable/ic_calendar"
+                        app:endIconTint="@color/accent_yellow"
+                        app:startIconDrawable="@drawable/ic_date"
+                        app:startIconTint="@color/accent_yellow"
+                        app:hintTextColor="@color/accent_yellow"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:textColor="@color/text_primary_dark"
+                            android:textSize="16sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Day Input -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilDay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Day"
+                        app:boxBackgroundMode="outline"
+                        app:boxBackgroundColor="@color/surface_white"
+                        app:boxStrokeColor="@color/primary_green"
+                        app:endIconMode="clear_text"
+                        app:endIconTint="@color/primary_green"
+                        app:startIconDrawable="@drawable/ic_day"
+                        app:startIconTint="@color/primary_green"
+                        app:hintTextColor="@color/primary_green"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etDay"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapCharacters"
+                            android:maxLines="1"
+                            android:textColor="@color/text_primary_dark"
+                            android:textSize="16sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Time Picker -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Time"
+                        app:boxBackgroundMode="outline"
+                        app:boxBackgroundColor="@color/surface_white"
+                        app:boxStrokeColor="@color/accent_yellow"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@drawable/ic_clock"
+                        app:endIconTint="@color/accent_yellow"
+                        app:startIconDrawable="@drawable/ic_time"
+                        app:startIconTint="@color/accent_yellow"
+                        app:hintTextColor="@color/accent_yellow"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:textColor="@color/text_primary_dark"
+                            android:textSize="16sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:id="@+id/actionButtons"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/optionalFieldsCard">
+
+                <!-- Preview Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPreview"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Preview"
+                    android:textColor="@color/primary_green"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_preview"
+                    app:iconTint="@color/primary_green"
+                    app:iconGravity="textStart"
+                    app:strokeColor="@color/primary_green"
+                    app:strokeWidth="2dp"
+                    app:cornerRadius="12dp"
+                    app:rippleColor="@color/ripple_primary" />
+
+                <!-- Export Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnExport"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="Export"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_export"
+                    app:iconTint="@color/white"
+                    app:iconGravity="textStart"
+                    app:backgroundTint="@color/primary_green"
+                    app:cornerRadius="12dp"
+                    app:rippleColor="@color/ripple_accent" />
 
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Buttons -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPreview"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:text="Preview"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/accent"
-            app:cornerRadius="12dp"
-            app:icon="@android:drawable/ic_menu_view"
-            app:iconTint="@color/white"
-            app:layout_constraintEnd_toStartOf="@+id/btnExport"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/inputCard" />
+            <!-- Quick Actions -->
+            <LinearLayout
+                android:id="@+id/quickActions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/actionButtons"
+                app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnExport"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="Export"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/primary"
-            app:cornerRadius="12dp"
-            app:icon="@android:drawable/stat_sys_download"
-            app:iconTint="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btnPreview"
-            app:layout_constraintTop_toBottomOf="@id/inputCard" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnClear"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clear All"
+                    android:textColor="@color/error_red"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_clear"
+                    app:iconTint="@color/error_red" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAutoFill"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Auto Fill"
+                    android:textColor="@color/info_blue"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_auto_fill"
+                    app:iconTint="@color/info_blue" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Loading Dialog -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/loadingCard"
+        android:layout_width="200dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:elevation="12dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="12dp"
+        app:cardBackgroundColor="@color/surface_white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminate="true"
+                app:indicatorColor="@color/primary_green"
+                app:trackColor="@color/surface_grey" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Exporting..."
+                android:textColor="@color/text_primary_dark"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

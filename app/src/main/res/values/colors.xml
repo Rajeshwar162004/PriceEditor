@@ -1,40 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Colors (From SIRI AGRO template) -->
-    <color name="primary">#1B5E20</color>          <!-- Dark Forest Green -->
-    <color name="primary_dark">#0D3F11</color>     <!-- Darker Green -->
-    <color name="primary_light">#4CAF50</color>    <!-- Lighter Green -->
+    <!-- Enhanced Primary Colors -->
+    <color name="primary_green">#1B5E20</color>
+    <color name="primary_green_dark">#0D3F11</color>
+    <color name="primary_green_light">#4CAF50</color>
+    <color name="primary_green_surface">#E8F5E8</color>
 
-    <!-- Secondary/Accent Colors -->
-    <color name="accent">#FBC02D</color>           <!-- Golden Yellow -->
-    <color name="accent_dark">#F9A825</color>      <!-- Deeper Yellow -->
-    <color name="accent_light">#FFF9C4</color>     <!-- Light Yellow -->
+    <!-- Enhanced Accent Colors -->
+    <color name="accent_yellow">#FBC02D</color>
+    <color name="accent_yellow_dark">#F57F17</color>
+    <color name="accent_yellow_light">#FFF9C4</color>
+    <color name="accent_yellow_surface">#FFFDE7</color>
 
-    <!-- Background & Surface -->
-    <color name="background">#F5F5F5</color>       <!-- Light Gray -->
-    <color name="surface">#FFFFFF</color>          <!-- Pure White -->
-    <color name="card_background">#FFFFFF</color>
+    <!-- Semantic Colors -->
+    <color name="success_green">#388E3C</color>
+    <color name="warning_orange">#F57C00</color>
+    <color name="error_red">#D32F2F</color>
+    <color name="info_blue">#1976D2</color>
 
-    <!-- Text Colors -->
-    <color name="text_primary">#212121</color>     <!-- Dark text -->
-    <color name="text_secondary">#757575</color>   <!-- Gray text -->
-    <color name="text_hint">#BDBDBD</color>        <!-- Light gray hint -->
-    <color name="text_on_primary">#FFFFFF</color>  <!-- White on green -->
-    <color name="text_on_accent">#000000</color>   <!-- Black on yellow -->
+    <!-- Enhanced Background & Surface -->
+    <color name="background_light">#FAFAFA</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="surface_grey">#F5F5F5</color>
+
+    <!-- Enhanced Text Colors -->
+    <color name="text_primary_dark">#212121</color>
+    <color name="text_secondary_dark">#666666</color>
+    <color name="text_hint_dark">#9E9E9E</color>
+    <color name="text_primary_light">#FFFFFF</color>
+    <color name="text_secondary_light">#E0E0E0</color>
+
+    <!-- Missing Colors from your original file -->
+    <color name="text_on_primary">#FFFFFF</color>
+    <color name="text_on_accent">#000000</color>
+    <color name="text_primary">#212121</color>
     <color name="text_on_background">#212121</color>
     <color name="text_on_surface">#212121</color>
 
-    <!-- Additional Colors -->
-    <color name="brown_text">#795548</color>       <!-- Brown -->
-    <color name="cream">#FFF8E1</color>            <!-- Cream background -->
-
-    <!-- Status Colors -->
+    <!-- Your original colors for compatibility -->
+    <color name="primary">#1B5E20</color>
+    <color name="primary_dark">#0D3F11</color>
+    <color name="primary_light">#4CAF50</color>
+    <color name="accent">#FBC02D</color>
+    <color name="accent_dark">#F9A825</color>
+    <color name="accent_light">#FFF9C4</color>
+    <color name="background">#F5F5F5</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+    <color name="brown_text">#795548</color>
+    <color name="cream">#FFF8E1</color>
     <color name="success">#4CAF50</color>
     <color name="error">#F44336</color>
     <color name="warning">#FF9800</color>
-
-    <!-- Utility -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
+
+    <!-- State Colors -->
+    <color name="ripple_primary">#401B5E20</color>
+    <color name="ripple_accent">#40FBC02D</color>
+    <color name="disabled_grey">#424242</color>
 </resources>
