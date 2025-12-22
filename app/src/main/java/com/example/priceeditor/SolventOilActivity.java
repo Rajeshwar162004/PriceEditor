@@ -113,7 +113,7 @@ public class SolventOilActivity extends AppCompatActivity {
     }
 
     private void setupTemplate() {
-        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.solvent);
+        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.oil_template);
         imagePreview.setImageBitmap(templateBitmap);
         imagePreview.setContentDescription("Solvent Oil Template Preview");
     }
@@ -431,16 +431,16 @@ public class SolventOilActivity extends AppCompatActivity {
                 ? formatTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE))
                 : userTime.toUpperCase(Locale.US);
 
-        float dateY = 0.2900f * h;
+        float dateY = 0.3100f * h;
         float dayTimeY = 0.3343f * h;
-        float rateY = 0.3831f * h;
-        float deliveryY = 0.4218f * h;
-        float paymentY = 0.5156f * h;
+        float rateY = 0.4031f * h;
+        float deliveryY = 0.4418f * h;
+        float paymentY = 0.5356f * h;
 
         canvas.drawText("DATE :- " + dateStr, centerX, dateY, brownPaint);
         canvas.drawText("DAY :- " + dayStr + "  TIME :- " + timeStr, centerX, dayTimeY, brownPaint);
 
-        String rateText = "SOYA SOLVENT OIL RATE - " + (oilRate.isEmpty() ? "" : oilRate + "/- Per " + perKg + " +GST");
+        String rateText = "SOYA SOLVENT OIL RATE - " + "₹"+(oilRate.isEmpty() ? "" : oilRate + "/- Per " + perKg + " +GST");
         canvas.drawText(rateText, centerX, rateY, blackPaint);
 
         canvas.drawText("DELIVERY PERIOD - WAR TO WAR", centerX, deliveryY, blackPaint);

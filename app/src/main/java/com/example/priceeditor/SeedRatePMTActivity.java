@@ -116,7 +116,7 @@ public class SeedRatePMTActivity extends AppCompatActivity {
     }
 
     private void setupTemplate() {
-        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.seedpmt);
+        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.doc_template);
         imagePreview.setImageBitmap(templateBitmap);
         imagePreview.setContentDescription("Soya Seed Rate Template Preview");
     }
@@ -441,16 +441,16 @@ public class SeedRatePMTActivity extends AppCompatActivity {
                 ? formatTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE))
                 : userTime.toUpperCase(Locale.US);
 
-        float dateY = 0.2900f * h;
+        float dateY = 0.3100f * h;
         float dayTimeY = 0.3343f * h;
-        float rateY = 0.3831f * h;
-        float deliveryY = 0.4218f * h;
-        float qualityY = 0.4875f * h;
-        float paymentY = 0.5156f * h;
+        float rateY = 0.4031f * h;
+        float deliveryY = 0.4418f * h;
+        float qualityY = 0.5075f * h;
+        float paymentY = 0.5356f * h;
 
         canvas.drawText("DATE :- " + dateStr, cx, dateY, brown);
         canvas.drawText("DAY :- " + dayStr + "  TIME :- " + timeStr, cx, dayTimeY, brown);
-        canvas.drawText("SOYA DOC PER TON RATE - " + (rate.isEmpty() ? "" : rate + "/- PMT +GST"), cx, rateY, black);
+        canvas.drawText("SOYA DOC PER TON RATE  ₹ " + (rate.isEmpty() ? "" : rate + "/- PMT +GST"), cx, rateY, black);
         canvas.drawText("DELIVERY PERIOD - WAR TO WAR", cx, deliveryY, black);
         canvas.drawText("Quality - " + quality, cx, qualityY, red);
         canvas.drawText("PAYMENT CONDITION : EX FACTORY ADVANCE 100%", cx, paymentY, black);

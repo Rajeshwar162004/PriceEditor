@@ -110,7 +110,7 @@ public class SeedRatePQTActivity extends AppCompatActivity {
     }
 
     private void setupTemplate() {
-        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.new_templet);
+        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.templatepqt);
         imagePreview.setImageBitmap(templateBitmap);
         imagePreview.setContentDescription("Soya Seed Rate Template Preview");
     }
@@ -393,7 +393,7 @@ public class SeedRatePQTActivity extends AppCompatActivity {
 
         Paint ratePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         ratePaint.setColor(Color.BLACK);
-        ratePaint.setTextSize(w * 0.0475f);
+        ratePaint.setTextSize(w * 0.040f);
         ratePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         ratePaint.setTextAlign(Paint.Align.LEFT);
 
@@ -406,7 +406,7 @@ public class SeedRatePQTActivity extends AppCompatActivity {
         float dateY = 0.2190f * h;
         float dayTimeY = 0.2550f * h;
         float rateY = 0.295f * h;
-        float rateX = 0.495f * w;
+        float rateX = 0.48f * w;
 
         Calendar now = Calendar.getInstance();
         SimpleDateFormat dateFmt = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -420,7 +420,7 @@ public class SeedRatePQTActivity extends AppCompatActivity {
 
         canvas.drawText("DATE :- " + dateStr, centerX, dateY, brownPaint);
         canvas.drawText("DAY :- " + dayStr + "  TIME :- " + timeStr, centerX, dayTimeY, brownPaint);
-        canvas.drawText((rate.isEmpty() ? "" : rate) + "/-", rateX, rateY, ratePaint);
+        canvas.drawText("₹"+ (rate.isEmpty() ? "" : rate) + "/-", rateX, rateY, ratePaint);
 
         return bmp;
     }
