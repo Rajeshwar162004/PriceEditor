@@ -116,7 +116,7 @@ public class SeedRatePMTActivity extends AppCompatActivity {
     }
 
     private void setupTemplate() {
-        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.doc_template);
+        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.oilanddoc);
         imagePreview.setImageBitmap(templateBitmap);
         imagePreview.setContentDescription("Soya Seed Rate Template Preview");
     }
@@ -415,7 +415,7 @@ public class SeedRatePMTActivity extends AppCompatActivity {
 
         Paint black = new Paint(Paint.ANTI_ALIAS_FLAG);
         black.setColor(Color.parseColor("#1C1C1C"));
-        black.setTextSize(w * 0.038f);
+        black.setTextSize(w * 0.038f);  // default size
         black.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         black.setTextAlign(Paint.Align.CENTER);
 
@@ -450,7 +450,13 @@ public class SeedRatePMTActivity extends AppCompatActivity {
 
         canvas.drawText("DATE :- " + dateStr, cx, dateY, brown);
         canvas.drawText("DAY :- " + dayStr + "  TIME :- " + timeStr, cx, dayTimeY, brown);
+
+        // Increase font size only for rate line
+        float oldSize = black.getTextSize();
+        black.setTextSize(w * 0.045f);  // your desired size
         canvas.drawText("SOYA DOC PER TON RATE  ₹ " + (rate.isEmpty() ? "" : rate + "/- PMT +GST"), cx, rateY, black);
+        black.setTextSize(oldSize);  // restore for other lines
+
         canvas.drawText("DELIVERY PERIOD - WAR TO WAR", cx, deliveryY, black);
         canvas.drawText("Quality - " + quality, cx, qualityY, red);
         canvas.drawText("PAYMENT CONDITION : EX FACTORY ADVANCE 100%", cx, paymentY, black);

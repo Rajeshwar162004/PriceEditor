@@ -113,7 +113,7 @@ public class SolventOilActivity extends AppCompatActivity {
     }
 
     private void setupTemplate() {
-        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.oil_template);
+        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.oilanddoc);
         imagePreview.setImageBitmap(templateBitmap);
         imagePreview.setContentDescription("Solvent Oil Template Preview");
     }
@@ -437,11 +437,30 @@ public class SolventOilActivity extends AppCompatActivity {
         float deliveryY = 0.4418f * h;
         float paymentY = 0.5356f * h;
 
+        String rateText = "SOYA SOLVENT OIL RATE " + "₹ " +
+                (oilRate.isEmpty() ? "" : oilRate + "/- Per " + perKg + " +GST");
+
+// y-position stays same
+
+
+// 1) save old size
+        float oldSize = blackPaint.getTextSize();
+
+// 2) set a bigger size only for rateText
+        blackPaint.setTextSize(w * 0.045f);  // try 0.055f or 0.06f
+
+// 3) draw the bigger text
+        canvas.drawText(rateText, centerX, rateY, blackPaint);
+
+// 4) restore original size for other black texts
+        blackPaint.setTextSize(oldSize);
+
+
         canvas.drawText("DATE :- " + dateStr, centerX, dateY, brownPaint);
         canvas.drawText("DAY :- " + dayStr + "  TIME :- " + timeStr, centerX, dayTimeY, brownPaint);
 
-        String rateText = "SOYA SOLVENT OIL RATE - " + "₹"+(oilRate.isEmpty() ? "" : oilRate + "/- Per " + perKg + " +GST");
-        canvas.drawText(rateText, centerX, rateY, blackPaint);
+//        String rateText = "SOYA SOLVENT OIL RATE " + "₹ "+(oilRate.isEmpty() ? "" : oilRate + "/- Per " + perKg + " +GST");
+//        canvas.drawText(rateText, centerX, rateY, blackPaint);
 
         canvas.drawText("DELIVERY PERIOD - WAR TO WAR", centerX, deliveryY, blackPaint);
         canvas.drawText("PAYMENT CONDITION : EX FACTORY ADVANCE 100%", centerX, paymentY, blackPaint);
