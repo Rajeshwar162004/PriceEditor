@@ -116,7 +116,7 @@ public class SeedRatePMTActivity extends AppCompatActivity {
     }
 
     private void setupTemplate() {
-        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.oilanddoc);
+        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.doc_template);
         imagePreview.setImageBitmap(templateBitmap);
         imagePreview.setContentDescription("Soya Seed Rate Template Preview");
     }

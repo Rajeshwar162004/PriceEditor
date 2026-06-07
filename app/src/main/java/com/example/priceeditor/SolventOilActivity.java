@@ -113,7 +113,7 @@ public class SolventOilActivity extends AppCompatActivity {
     }
 
     private void setupTemplate() {
-        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.oilanddoc);
+        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.oil_template);
         imagePreview.setImageBitmap(templateBitmap);
         imagePreview.setContentDescription("Solvent Oil Template Preview");
     }

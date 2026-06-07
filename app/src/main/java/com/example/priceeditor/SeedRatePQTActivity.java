@@ -110,7 +110,7 @@ public class SeedRatePQTActivity extends AppCompatActivity {
     }
 
     private void setupTemplate() {
-        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.templatepqt);
+        templateBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.seed_pqt);
         imagePreview.setImageBitmap(templateBitmap);
         imagePreview.setContentDescription("Soya Seed Rate Template Preview");
     }
@@ -393,20 +393,21 @@ public class SeedRatePQTActivity extends AppCompatActivity {
 
         Paint ratePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         ratePaint.setColor(Color.BLACK);
-        ratePaint.setTextSize(w * 0.040f);
+        ratePaint.setTextSize(w * 0.0422f);
         ratePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         ratePaint.setTextAlign(Paint.Align.LEFT);
 
         Paint brownPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         brownPaint.setColor(Color.parseColor("#8B4513"));
-        brownPaint.setTextSize(w * 0.032f);
+        brownPaint.setTextSize(w * 0.035f);
         brownPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         brownPaint.setTextAlign(Paint.Align.CENTER);
 
         float dateY = 0.2190f * h;
         float dayTimeY = 0.2550f * h;
-        float rateY = 0.295f * h;
-        float rateX = 0.48f * w;
+//        float rateY = 0.295f * h;
+        float rateY = 0.305f * h;
+        float rateX = 0.482f * w;
 
         Calendar now = Calendar.getInstance();
         SimpleDateFormat dateFmt = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -420,7 +421,7 @@ public class SeedRatePQTActivity extends AppCompatActivity {
 
         canvas.drawText("DATE :- " + dateStr, centerX, dateY, brownPaint);
         canvas.drawText("DAY :- " + dayStr + "  TIME :- " + timeStr, centerX, dayTimeY, brownPaint);
-        canvas.drawText("₹"+ (rate.isEmpty() ? "" : rate) + "/-", rateX, rateY, ratePaint);
+        canvas.drawText(" ₹ "+ (rate.isEmpty() ? " " : rate) + "/-", rateX, rateY, ratePaint);
 
         return bmp;
     }
